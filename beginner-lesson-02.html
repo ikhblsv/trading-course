@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3 Reasons 90% of Traders Blow Their Account — Beginner Lesson 02</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D1117;
+    --surface:#141A22;
+    --surface-2:#1B232D;
+    --border:#26313E;
+    --text:#EDF2F6;
+    --text-muted:#8B96A6;
+    --text-faint:#5C6675;
+    --accent:#4C9FE8;
+    --accent-dim:rgba(76,159,232,0.14);
+    --green:#2FBE72;
+    --green-dim:rgba(47,190,114,0.14);
+    --red:#F0555B;
+    --red-dim:rgba(240,85,91,0.14);
+    --amber:#E0A030;
+    --amber-dim:rgba(224,160,48,0.14);
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--bg); color:var(--text); font-family:var(--body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+
+  body::before{
+    content:""; position:fixed; inset:0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 64px 64px; opacity:0.06; pointer-events:none; z-index:0;
+  }
+
+  /* ---------- ambient theme glow layers ---------- */
+  .glow{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0; transition:opacity 1.1s ease; }
+  #glow-blue{ background:radial-gradient(circle at 75% 20%, rgba(76,159,232,0.10), transparent 55%); }
+  #glow-green{ background:radial-gradient(circle at 75% 20%, rgba(47,190,114,0.10), transparent 55%); }
+  #glow-red{ background:radial-gradient(circle at 75% 20%, rgba(240,85,91,0.10), transparent 55%); }
+  .glow.active{ opacity:1; }
+
+  /* ---------- ambient drifting candles ---------- */
+  .ambient{ position:fixed; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
+  .ambient span{ position:absolute; bottom:-200px; width:28px; border-radius:3px; opacity:0.05; animation:drift linear infinite; }
+  @keyframes drift{ 0%{ transform:translateY(0); } 100%{ transform:translateY(-140vh); } }
+
+  ::selection{ background:var(--accent-dim); color:var(--accent); }
+  a{ color:var(--accent); }
+
+  .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .eyebrow .num{ color:var(--text-faint); }
+  .eyebrow .time{ color:var(--text-faint); margin-left:auto; }
+
+  h1,h2,h3{ font-family:var(--display); font-weight:600; letter-spacing:-0.01em; }
+
+  /* ---------- progress rail ---------- */
+  .rail{ position:fixed; left:28px; top:50%; transform:translateY(-50%); z-index:50; display:flex; flex-direction:column; gap:12px; align-items:flex-start; }
+  .rail-line{ position:absolute; left:5px; top:6px; bottom:6px; width:1px; background:var(--border); z-index:-1; }
+  .rail-fill{ position:absolute; left:5px; top:6px; width:1px; background:var(--accent); height:0%; transition:height .4s ease; z-index:-1; }
+  .rail-dot{ display:flex; align-items:center; gap:10px; background:none; border:none; cursor:pointer; padding:0; color:var(--text-faint); font-family:var(--mono); font-size:11px; opacity:0.55; transition:opacity .3s ease, color .3s ease; }
+  .rail-dot .dot{ width:11px; height:11px; border-radius:50%; border:1.5px solid var(--text-faint); background:var(--bg); flex-shrink:0; transition:all .3s ease; }
+  .rail-dot .label{ max-width:0; overflow:hidden; white-space:nowrap; transition:max-width .3s ease; }
+  .rail-dot:hover .label, .rail-dot.active .label{ max-width:160px; }
+  .rail-dot.active{ opacity:1; color:var(--text); }
+  .rail-dot.active .dot{ border-color:var(--accent); background:var(--accent); box-shadow:0 0 0 4px var(--accent-dim); }
+  @media (max-width:900px){ .rail{ display:none; } }
+
+  main{ position:relative; z-index:1; }
+  section{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:110px clamp(24px,8vw,140px); border-bottom:1px solid var(--border); position:relative; }
+  .section-inner{ max-width:1140px; margin:0 auto; width:100%; position:relative; }
+  .grid-2{ display:grid; grid-template-columns:1.05fr 0.95fr; gap:64px; align-items:center; }
+  @media (max-width:900px){ .grid-2{ grid-template-columns:1fr; gap:40px; } }
+
+  .body-copy{ font-size:17px; color:var(--text-muted); max-width:64ch; }
+  .body-copy + .body-copy{ margin-top:16px; }
+  .body-copy strong{ color:var(--text); font-weight:600; }
+
+  .block-title{ font-size:clamp(26px,3.2vw,38px); margin-bottom:22px; color:var(--text); }
+
+  /* callouts */
+  .callout{ border-left:3px solid var(--accent); background:var(--surface); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14.5px; color:var(--text-muted); margin-top:18px; max-width:64ch; }
+  .callout .callout-label{ font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); display:block; margin-bottom:6px; }
+  .callout.warn{ border-left-color:var(--amber); }
+  .callout.warn .callout-label{ color:var(--amber); }
+  .callout.tip{ border-left-color:var(--green); }
+  .callout.tip .callout-label{ color:var(--green); }
+
+  .diagram-card, .chart-wrap{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:26px; position:relative; overflow:visible; }
+  .diagram-card svg{ width:100%; height:auto; display:block; }
+  .chart-scroll{ overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; border-radius:8px; }
+  .chart-scroll svg{ display:block; height:auto; width:900px; }
+  @media (min-width:820px){ .chart-scroll svg{ width:100%; } }
+  .chart-scroll::-webkit-scrollbar{ height:6px; }
+  .chart-scroll::-webkit-scrollbar-thumb{ background:var(--border); border-radius:3px; }
+  .scroll-nudge{ display:none; font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-top:8px; letter-spacing:.06em; text-transform:uppercase; }
+  @media (max-width:819px){ .scroll-nudge{ display:block; } }
+
+  /* reveal on scroll — gated behind confirmed JS support, so content is visible by default without it */
+  html.js-ready .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  html.js-ready section.in-view .reveal{ opacity:1; transform:translateY(0); }
+  html.js-ready section.in-view .reveal.d1{ transition-delay:.08s; }
+  html.js-ready section.in-view .reveal.d2{ transition-delay:.18s; }
+
+  html.js-ready .draw{ stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+  html.js-ready section.in-view .draw{ stroke-dashoffset:0; }
+  html.js-ready .fade-in{ opacity:0; transition:opacity .6s ease; }
+  html.js-ready section.in-view .fade-in{ opacity:1; }
+  html.js-ready .fade-in.t1{ transition-delay:.5s; } html.js-ready .fade-in.t2{ transition-delay:.7s; } html.js-ready .fade-in.t3{ transition-delay:.9s; }
+  html.js-ready .fade-in.t4{ transition-delay:1.1s; } html.js-ready .fade-in.t5{ transition-delay:1.3s; } html.js-ready .fade-in.t6{ transition-delay:1.5s; }
+  html.js-ready .grow{ transform-origin:bottom; transform:scaleY(0); transition:transform .8s cubic-bezier(.4,0,.2,1); }
+  html.js-ready section.in-view .grow{ transform:scaleY(1); }
+
+  .chip-bg-blue{ fill:var(--accent-dim); stroke:var(--accent); stroke-width:1; }
+  .chip-text-blue{ fill:var(--accent); font-family:var(--mono); font-size:11px; }
+  .grid-line{ stroke:var(--border); stroke-width:1; stroke-dasharray:3 4; }
+  .axis-label{ font-family:var(--mono); font-size:9px; fill:var(--text-faint); }
+  .ticker-label{ font-family:var(--mono); font-size:11px; fill:var(--text-muted); letter-spacing:.05em; }
+  .anno-label{ font-family:var(--mono); font-size:10px; fill:var(--accent); }
+
+  /* pop-in floating badges — same progressive-enhancement gating */
+  .badge{ position:absolute; background:var(--surface-2); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:var(--mono); font-size:11.5px; color:var(--text); pointer-events:none; z-index:6; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,.35); }
+  html.js-ready .badge{ opacity:0; transform:scale(.6) rotate(-6deg); transition:opacity .55s cubic-bezier(.34,1.56,.64,1), transform .55s cubic-bezier(.34,1.56,.64,1); }
+  html.js-ready section.in-view .badge{ opacity:1; transform:scale(1) rotate(-2deg); }
+  .badge.dot-green::before{ content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); margin-right:7px; }
+  .badge.dot-red::before{ content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--red); margin-right:7px; }
+  .badge.dot-blue::before{ content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent); margin-right:7px; }
+  @media (max-width:600px){
+    .badge{ font-size:10px; padding:6px 10px; white-space:normal; max-width:58%; line-height:1.35; box-shadow:0 6px 16px rgba(0,0,0,.35); }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:60px clamp(24px,8vw,140px); text-align:center; border-bottom:1px solid var(--border); position:relative; }
+  .hero-eyebrow{ font-family:var(--mono); font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:28px; }
+  .hero h1{ font-size:clamp(38px,6.4vw,74px); line-height:1.05; max-width:16ch; margin:0 auto 28px; }
+  .hero h1 .hl{ color:var(--accent); }
+  .hero p{ color:var(--text-muted); font-size:18px; max-width:52ch; margin:0 auto 36px; }
+  .hero-candle{ width:120px; height:180px; margin:0 auto 40px; }
+  .objectives{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:620px; margin:0 auto 44px; }
+  .objectives span{ font-family:var(--mono); font-size:11.5px; color:var(--text-muted); background:var(--surface); border:1px solid var(--border); padding:7px 14px; border-radius:20px; }
+  .scroll-hint{ font-family:var(--mono); font-size:11px; color:var(--text-faint); display:flex; flex-direction:column; align-items:center; gap:10px; letter-spacing:0.1em; text-transform:uppercase; }
+  .scroll-hint .line{ width:1px; height:36px; background:linear-gradient(var(--text-faint), transparent); animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:.3; } 50%{ opacity:1; } }
+
+  .rule-card{ background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px 24px; display:flex; gap:16px; align-items:flex-start; }
+  .rule-card + .rule-card{ margin-top:14px; }
+  .rule-num{ font-family:var(--mono); font-size:13px; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .rule-card h4{ font-family:var(--display); font-size:16px; margin-bottom:6px; }
+  .rule-card p{ color:var(--text-muted); font-size:14.5px; }
+
+  .recap-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:8px; }
+  @media (max-width:700px){ .recap-grid{ grid-template-columns:1fr; } }
+  .recap-card{ background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .recap-card .tag{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; }
+  .recap-card h4{ font-family:var(--display); font-size:16px; margin:8px 0 6px; }
+  .recap-card p{ color:var(--text-muted); font-size:13.5px; }
+
+  .next-lesson{ margin-top:36px; display:inline-flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); padding:14px 20px; border-radius:12px; font-family:var(--mono); font-size:12.5px; color:var(--text-muted); }
+  .next-lesson strong{ color:var(--text); font-family:var(--display); font-size:14px; }
+
+  .twin-charts{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:700px){ .twin-charts{ grid-template-columns:1fr; } }
+  .twin-charts .chart-wrap h5{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; }
+
+  footer{ padding:60px clamp(24px,8vw,140px) 80px; text-align:center; color:var(--text-faint); font-family:var(--mono); font-size:12px; }
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js-ready');</script>
+
+<div class="glow" id="glow-blue"></div>
+<div class="glow" id="glow-green"></div>
+<div class="glow" id="glow-red"></div>
+<div class="ambient" id="ambient"></div>
+
+<nav class="rail" id="rail">
+  <div class="rail-line"></div>
+  <div class="rail-fill" id="railFill"></div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="hero-section">
+    <div>
+      <div class="hero-eyebrow">Beginner Tier — Lesson 02</div>
+      <svg class="hero-candle" id="heroCandle" viewBox="0 0 240 140" style="width:220px; height:auto;">
+        <polyline points="10,40 60,95 110,60 160,105 200,25" fill="none" stroke="var(--text-faint)" stroke-width="3" pathLength="1" class="draw-hero"/>
+        <circle cx="60" cy="95" r="5" fill="var(--red)"/>
+        <circle cx="200" cy="25" r="5" fill="var(--green)"/>
+      </svg>
+      <h1>I blew <span class="hl">three accounts</span> before I learned this.</h1>
+      <p>A complete, readable version of this lesson — the three mistakes that kill most trading accounts, told straight from my own experience, and exactly how I fixed each one.</p>
+      <div class="objectives">
+        <span>✓ Respect your stop-loss</span>
+        <span>✓ Build a real system</span>
+        <span>✓ Beat overtrading</span>
+        <span>✓ Trade with patience</span>
+      </div>
+      <div class="scroll-hint"><div class="line"></div>Scroll</div>
+    </div>
+  </section>
+
+  <!-- 1. HOOK -->
+  <section data-index="0" data-label="Hook" data-theme="blue">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">01 / 09</span> Hook <span class="time">00:00–00:25</span></div>
+      <h2 class="block-title reveal d1">The statistic nobody beats</h2>
+      <p class="body-copy reveal d2">90% of traders blow their account. That's not an exaggeration — that's the statistic. And I was one of them. Blew my first account. Blew my second one too. My third one lasted longer, but the result was the same.</p>
+      <p class="body-copy reveal d2">Today I'm going to walk you through the three real reasons this happens — not from some book, from my own experience — and exactly how I fixed each one. If you're just starting out, this lesson alone could save you the eighteen months it took me to figure this out.</p>
+      <div class="callout reveal d2">
+        <span class="callout-label">Why it matters</span>
+        This isn't a scare tactic — 90% is a widely cited figure across retail trading studies, and it holds up whether you're trading forex, crypto, or stocks. The traders who survive aren't the ones who found a secret indicator. They're the ones who fixed the three habits below.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. MY STORY -->
+  <section data-index="1" data-label="My Story" data-theme="blue">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">02 / 09</span> My Story <span class="time">00:25–00:55</span></div>
+      <h2 class="block-title reveal d1">Four years, three mistakes</h2>
+      <p class="body-copy reveal d2">I've been trading for four years. Things are stable now, but the first year and a half was brutal. I made every mistake in the book, blew accounts, got angry at the market — I genuinely thought trading was rigged against me.</p>
+      <p class="body-copy reveal d2">Then I realized: the problem wasn't the market. The problem was me. And the moment I honestly looked at my own mistakes, everything changed. The three mistakes below are exactly what I found when I finally looked.</p>
+      <div class="callout tip reveal d2">
+        <span class="callout-label">Why this matters for you</span>
+        You don't need 18 months of losses to learn this. That's the entire point of this lesson — you get the pattern recognition without paying for it in real money first.
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. MISTAKE 1 -->
+  <section data-index="2" data-label="Move Stop" data-theme="red">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">03 / 09</span> Mistake #1 <span class="time">00:55–01:45</span></div>
+      <h2 class="block-title reveal d1">Moving the stop-loss</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">This was my biggest problem early on. I'd open a trade, set my stop, and if price moved against me, I'd think: "okay, just a little more room." I'd move the stop. Price kept dropping, I'd move it again — or just delete it entirely, telling myself it had to reverse eventually. It doesn't have to. And most of the time, it didn't. So instead of a small -1% loss, I'd end up down -10%, -20% — sometimes the whole account. Why do we do this? Because moving your stop means admitting you were wrong, and your brain hates that. It's easier to hope. The market doesn't care about your hope.</p>
+      <div class="chart-wrap reveal d2">
+        <div class="chart-scroll" id="chart-stoploss"></div>
+        <div class="scroll-nudge">← scroll to see the full chart →</div>
+      </div>
+      <div class="callout warn reveal d2">
+        <span class="callout-label">Common mistake</span>
+        Deleting the stop-loss entirely feels different from "just moving it once," but it's the same decision repeated with more confidence and less honesty. If you've ever removed a stop "just for this one trade," that's the exact moment this mistake takes hold.
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. FIX 1 -->
+  <section data-index="3" data-label="Fix Stop" data-theme="green">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">04 / 09</span> Fix #1 <span class="time">01:45–02:15</span></div>
+      <h2 class="block-title reveal d1">The stop-loss is sacred</h2>
+      <p class="body-copy reveal d2">Here's the rule I put in place: the stop-loss is sacred. Once it's set, you never touch it. If a trade goes against you, that's fine — that's part of the game. You're not going to be right 100% of the time. Your only job is to limit the damage, and your stop does exactly that, as long as you leave it alone.</p>
+      <p class="body-copy reveal d2">I started treating my stop like insurance: pay a small, known cost now, so you don't lose everything later. After that shift, my results changed — not because I got better at predicting direction, but because my losing trades stopped wiping out my account.</p>
+      <div class="callout tip reveal d2">
+        <span class="callout-label">Try this</span>
+        Before you enter any trade, write your stop-loss price down somewhere outside your trading platform — a notes app, a notebook. If you find yourself wanting to move it, the friction of having it written down elsewhere makes the habit much easier to catch.
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. MISTAKE 2 -->
+  <section data-index="4" data-label="No System" data-theme="red">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">05 / 09</span> Mistake #2 <span class="time">02:15–03:00</span></div>
+      <h2 class="block-title reveal d1">No system</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">This was my second phase. I'd already stopped moving my stop, but I was entering trades with no real rules. I'd see something on the chart and jump in. Read some news and jump in. Someone in a chat said "buy" — I jumped in too. No system, no rules, just reacting to whatever was in front of me. What happened? Sometimes I made money, sometimes I lost — but overall, always in the red. Why doesn't this work? Because without a system, you have no idea what's actually working and what isn't. You can't improve what you can't measure. That's not trading. That's gambling.</p>
+      <div class="chart-wrap reveal d2">
+        <div class="chart-scroll" id="chart-nosystem"></div>
+        <div class="scroll-nudge">← scroll to see the full chart →</div>
+      </div>
+      <div class="callout warn reveal d2">
+        <span class="callout-label">Common mistake</span>
+        Notice this isn't about being wrong on direction — random entries can still occasionally win. The real cost is that you learn nothing from any of them, because there was no consistent rule to confirm or break.
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. FIX 2 -->
+  <section data-index="5" data-label="Build System" data-theme="green">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">06 / 09</span> Fix #2 <span class="time">03:00–03:30</span></div>
+      <h2 class="block-title reveal d1">Build a system</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">Here's how I fixed it: I built a simple system. I wrote the rules down on paper — when to enter, when not to. Where's my stop, where's my target, what timeframe, what pairs. Everything specific, everything written down. And the key part: I followed those rules every single time, not just when it was convenient. If a setup didn't match my rules, I didn't trade it, even if my gut told me price was about to move. A system removes emotion. It gives you repeatability, and it lets you actually see what's working and what isn't. Without a system, you're a gambler. With one, you're a trader.</p>
+      <div class="chart-wrap reveal d2">
+        <div class="chart-scroll" id="chart-system"></div>
+        <div class="scroll-nudge">← scroll to see the full chart →</div>
+      </div>
+      <div class="callout tip reveal d2">
+        <span class="callout-label">Try this</span>
+        Your first system doesn't need to be sophisticated. Pick one setup you already half-recognize — a pullback to a trendline, a bounce off a support level — write down the exact entry, stop, and target rule for it, and trade only that for your next 20 trades.
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. MISTAKE 3 -->
+  <section data-index="6" data-label="Overtrading" data-theme="red">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">07 / 09</span> Mistake #3 <span class="time">03:30–04:15</span></div>
+      <h2 class="block-title reveal d1">Overtrading</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">This became my trap right after I built my system. I figured: if the system works, trading more means making more money. Logical, right? Wrong. I started forcing setups that weren't really there. Saw something that almost looked like a setup — took it. Saw something similar — took that too. I'd sit at my screen all day hunting for opportunities. The result? A pile of junk trades. Money burned on commissions and spread, emotional burnout, and by the end of the month — a net loss. Good setups are rare, and that's completely normal. Quality beats quantity.</p>
+      <div class="twin-charts reveal d2">
+        <div class="chart-wrap"><h5>Overtrading — 10 forced trades</h5><div class="chart-scroll" id="chart-overtrading"></div></div>
+        <div class="chart-wrap"><h5>Quality — 1 clean setup</h5><div class="chart-scroll" id="chart-quality"></div></div>
+      </div>
+      <div class="callout warn reveal d2">
+        <span class="callout-label">Common mistake</span>
+        "I have a system now, so I should use it constantly" is one of the most common traps right after Mistake #2 gets fixed. A good system tells you when NOT to trade at least as often as when to trade.
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. FIX 3 -->
+  <section data-index="7" data-label="Trade Better" data-theme="green">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">08 / 09</span> Fix #3 <span class="time">04:15–04:50</span></div>
+      <h2 class="block-title reveal d1">Trade less, trade better</h2>
+      <p class="body-copy reveal d2">Here's the fix: I capped myself at one or two trades a day, maximum, no matter what the market was doing. If there was no good setup that day, I didn't trade. I'd shut the computer off, go for a walk, do something else.</p>
+      <p class="body-copy reveal d2">It was hard at first — it felt like I was missing out, like the market was moving without me. But when I actually looked at my stats: my win rate went up, my average profit per trade went up, and my overall results went up. Fewer trades, better results. Sounds backwards, but it's true. Patience is a skill, and it might be the single most important one in trading.</p>
+      <div class="callout tip reveal d2">
+        <span class="callout-label">Try this</span>
+        Set a literal daily trade cap — write the number down, e.g. "max 2" — before the session starts, not during it. Deciding your limit in the heat of the moment doesn't work; your emotions will always find a reason for "just one more."
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. RECAP -->
+  <section data-index="8" data-label="Recap" data-theme="green">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">09 / 09</span> Recap</div>
+      <h2 class="block-title reveal d1">Three fixes, one foundation</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:24px;">So — three reasons 90% of traders blow their accounts, and the fix for each.</p>
+      <div class="diagram-card reveal d2">
+        <svg viewBox="0 0 680 260">
+          <defs><marker id="arrow4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="var(--text-faint)"/></marker></defs>
+          <text x="170" y="30" text-anchor="middle" style="fill:var(--text-faint); font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em;">Mistake</text>
+          <text x="510" y="30" text-anchor="middle" style="fill:var(--text-faint); font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em;">Fix</text>
+
+          <text x="170" y="80" text-anchor="middle" style="fill:var(--red); font-family:var(--display); font-size:16px;" class="fade-in t1">Moving the stop</text>
+          <line x1="280" y1="76" x2="360" y2="76" stroke="var(--text-faint)" stroke-width="1.5" marker-end="url(#arrow4)" class="fade-in t2"/>
+          <rect x="400" y="62" width="220" height="30" rx="15" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1" class="fade-in t2"/>
+          <text x="510" y="80" text-anchor="middle" style="fill:var(--green); font-family:var(--display); font-size:13px;" class="fade-in t3">Stop-loss is sacred</text>
+
+          <text x="170" y="150" text-anchor="middle" style="fill:var(--red); font-family:var(--display); font-size:16px;" class="fade-in t2">No system</text>
+          <line x1="280" y1="146" x2="360" y2="146" stroke="var(--text-faint)" stroke-width="1.5" marker-end="url(#arrow4)" class="fade-in t3"/>
+          <rect x="400" y="132" width="220" height="30" rx="15" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1" class="fade-in t3"/>
+          <text x="510" y="150" text-anchor="middle" style="fill:var(--green); font-family:var(--display); font-size:13px;" class="fade-in t4">Write rules, follow them</text>
+
+          <text x="170" y="220" text-anchor="middle" style="fill:var(--red); font-family:var(--display); font-size:16px;" class="fade-in t3">Overtrading</text>
+          <line x1="280" y1="216" x2="360" y2="216" stroke="var(--text-faint)" stroke-width="1.5" marker-end="url(#arrow4)" class="fade-in t4"/>
+          <rect x="400" y="202" width="220" height="30" rx="15" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1" class="fade-in t4"/>
+          <text x="510" y="220" text-anchor="middle" style="fill:var(--green); font-family:var(--display); font-size:13px;" class="fade-in t5">Quality over quantity</text>
+        </svg>
+      </div>
+      <p class="body-copy reveal d2" style="margin-top:24px;">I made all three of these mistakes myself. All three cost me real money. But fixing them changed everything. Remember — trading isn't about being right. It's about not making dumb, avoidable mistakes. Protect your capital, follow your system, and be patient. Everything else follows from there.</p>
+      <div class="reveal d2">
+        <div class="next-lesson">Next up → <strong>Intermediate Tier: Market Structure</strong></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer><a href="index.html" style="color:var(--text-faint); text-decoration:none;">← Back to course overview</a> &nbsp;·&nbsp; Beginner Lesson 2 of 2 — 3 Reasons 90% of Traders Blow Their Account</footer>
+
+<script>
+  /* ---------- seeded random + chart generator ---------- */
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+  function genSeries(seed,n,start,vol,drift){
+    drift = drift||0;
+    const rand=mulberry32(seed); let price=start; const out=[];
+    for(let i=0;i<n;i++){
+      const open=price; const change=(rand()-0.5)*vol + drift; let close=open+change;
+      const high=Math.max(open,close)+rand()*vol*0.35;
+      const low=Math.min(open,close)-rand()*vol*0.35;
+      out.push({open,high,low,close}); price=close;
+    }
+    return out;
+  }
+
+  function renderChart(elId, opts){
+    const el=document.getElementById(elId); if(!el) return;
+    let candles=genSeries(opts.seed,opts.n,opts.start,opts.vol,opts.drift);
+    if(opts.overrides){ Object.keys(opts.overrides).forEach(i=>{ candles[i]=Object.assign({},candles[i],opts.overrides[i]); }); }
+    const W=900,H=340,padL=16,padR=64,padT=44,padB=20;
+    const plotW=W-padL-padR, plotH=H-padT-padB;
+    const highs=candles.map(c=>c.high), lows=candles.map(c=>c.low);
+    let max=Math.max(...highs), min=Math.min(...lows);
+    (opts.annotations||[]).forEach(a=>{ if(a.type==='line'){ max=Math.max(max,a.y); min=Math.min(min,a.y); } });
+    const range=(max-min)||1;
+    const y=v=>padT+(1-(v-min)/range)*plotH;
+    const n=candles.length, slot=plotW/n, cw=Math.max(3,slot*0.62);
+
+    let svg=`<svg viewBox="0 0 ${W} ${H}">`;
+    for(let i=0;i<=4;i++){
+      const gy=padT+plotH*i/4;
+      svg+=`<line x1="${padL}" y1="${gy}" x2="${W-padR+44}" y2="${gy}" class="grid-line"/>`;
+      svg+=`<text x="${W-padR+8}" y="${gy+4}" class="axis-label">${(max-range*i/4).toFixed(2)}</text>`;
+    }
+    svg+=`<text x="${padL}" y="22" class="ticker-label">${opts.ticker||''}</text>`;
+
+    candles.forEach((c,i)=>{
+      const cx=padL+slot*i+slot/2, up=c.close>=c.open;
+      const color=up?'var(--green)':'var(--red)', bg=up?'var(--green-dim)':'var(--red-dim)';
+      const bodyTop=y(Math.max(c.open,c.close)), bodyBot=y(Math.min(c.open,c.close));
+      const bodyH=Math.max(1.5,bodyBot-bodyTop);
+      const delay=(i*0.012).toFixed(3);
+      svg+=`<line x1="${cx}" y1="${y(c.high)}" x2="${cx}" y2="${y(c.low)}" stroke="${color}" stroke-width="1.4" pathLength="1" class="draw" style="transition-delay:${delay}s"/>`;
+      svg+=`<rect x="${(cx-cw/2).toFixed(1)}" y="${bodyTop.toFixed(1)}" width="${cw.toFixed(1)}" height="${bodyH.toFixed(1)}" fill="${bg}" stroke="${color}" stroke-width="1.2" rx="1" class="fade-in" style="transition-delay:${(i*0.012+0.15).toFixed(3)}s"/>`;
+    });
+
+    (opts.annotations||[]).forEach((a,ai)=>{
+      const delay=(1.2+ai*0.22).toFixed(2);
+      if(a.type==='zone'){
+        const x0=padL+slot*a.from, x1=padL+slot*(a.to+1);
+        const yTop=y(a.top), yBot=y(a.bottom);
+        svg+=`<rect x="${x0.toFixed(1)}" y="${yTop.toFixed(1)}" width="${(x1-x0).toFixed(1)}" height="${(yBot-yTop).toFixed(1)}" fill="var(--accent-dim)" stroke="var(--accent)" stroke-width="1" class="fade-in" style="transition-delay:${delay}s"/>`;
+        svg+=`<text x="${(x0+8).toFixed(1)}" y="${(yTop-8).toFixed(1)}" class="anno-label fade-in" style="transition-delay:${delay}s">${a.label}</text>`;
+      }
+      if(a.type==='line'){
+        const x0=padL+slot*a.from, x1=padL+slot*(a.to+1);
+        const yy=y(a.y);
+        const col = a.color==='red' ? 'var(--red)' : (a.color==='green' ? 'var(--green)' : 'var(--accent)');
+        svg+=`<line x1="${x0.toFixed(1)}" y1="${yy.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${yy.toFixed(1)}" stroke="${col}" stroke-width="1.6" stroke-dasharray="5 4" class="fade-in" style="transition-delay:${delay}s"/>`;
+        svg+=`<text x="${(x0+6).toFixed(1)}" y="${(yy-8).toFixed(1)}" class="anno-label fade-in" style="fill:${col}; transition-delay:${delay}s">${a.label}</text>`;
+      }
+      if(a.type==='marker'){
+        const cx=padL+slot*a.index+slot/2, cy=y(a.y);
+        const col = a.dir==='down' ? 'var(--red)' : 'var(--green)';
+        const pts = a.dir==='down' ? `${cx-6},${cy-8} ${cx+6},${cy-8} ${cx},${cy+4}` : `${cx-6},${cy+8} ${cx+6},${cy+8} ${cx},${cy-4}`;
+        svg+=`<polygon points="${pts}" fill="${col}" class="fade-in" style="transition-delay:${delay}s"/>`;
+      }
+      if(a.type==='x'){
+        const cx=padL+slot*a.index+slot/2, cy=y(a.y);
+        svg+=`<line x1="${cx-8}" y1="${cy-8}" x2="${cx+8}" y2="${cy+8}" stroke="var(--red)" stroke-width="3" class="fade-in" style="transition-delay:${delay}s"/>`;
+        svg+=`<line x1="${cx+8}" y1="${cy-8}" x2="${cx-8}" y2="${cy+8}" stroke="var(--red)" stroke-width="3" class="fade-in" style="transition-delay:${delay}s"/>`;
+        svg+=`<text x="${(cx+14).toFixed(1)}" y="${(cy+4).toFixed(1)}" class="anno-label fade-in" style="fill:var(--red); transition-delay:${delay}s">${a.label||''}</text>`;
+      }
+    });
+
+    svg+='</svg>';
+    el.innerHTML=svg;
+  }
+
+  window.addEventListener('load', () => {
+    // Mistake #1 — moving the stop-loss: steady decline, stop moved lower 3 times, account blown
+    renderChart('chart-stoploss', { seed:44, n:26, start:100, vol:1.1, drift:-0.55, ticker:'XAUUSD · 1H — position going against you',
+      annotations:[
+        {type:'line', from:2, to:9, y:97.5, color:'blue', label:'Stop #1'},
+        {type:'line', from:9, to:16, y:92.0, color:'blue', label:'Stop #2 (moved)'},
+        {type:'line', from:16, to:23, y:86.5, color:'red', label:'Stop #3 (moved)'},
+        {type:'x', index:24, y:83.5, label:'account blown'}
+      ]});
+
+    // Mistake #2 — no system: random, inconsistent entries against an unclear trend
+    renderChart('chart-nosystem', { seed:51, n:28, start:100, vol:1.3, ticker:'EURUSD · 1H — reacting to whatever you see',
+      annotations:[
+        {type:'marker', index:3, y:101, dir:'up'},
+        {type:'marker', index:7, y:97, dir:'down'},
+        {type:'marker', index:11, y:103, dir:'up'},
+        {type:'marker', index:15, y:99, dir:'down'},
+        {type:'marker', index:19, y:102, dir:'up'},
+        {type:'marker', index:23, y:96, dir:'down'}
+      ]});
+
+    // Fix #2 — a system: same kind of chart, but entries only at one repeatable rule (pullback in an uptrend)
+    renderChart('chart-system', { seed:63, n:28, start:90, vol:0.9, drift:0.35, ticker:'EURUSD · 1H — same rule, every time',
+      annotations:[
+        {type:'marker', index:5, y:92, dir:'up'},
+        {type:'marker', index:12, y:97, dir:'up'},
+        {type:'marker', index:19, y:102, dir:'up'}
+      ]});
+
+    // Mistake #3 — overtrading: many forced entries clustered together
+    renderChart('chart-overtrading', { seed:71, n:26, start:100, vol:1.0, ticker:'GBPUSD · 1H',
+      annotations:[
+        {type:'marker', index:4, y:101, dir:'up'}, {type:'marker', index:6, y:99, dir:'down'},
+        {type:'marker', index:8, y:102, dir:'up'}, {type:'marker', index:10, y:98, dir:'down'},
+        {type:'marker', index:12, y:101, dir:'up'}, {type:'marker', index:14, y:97, dir:'down'},
+        {type:'marker', index:16, y:100, dir:'up'}, {type:'marker', index:18, y:96, dir:'down'},
+        {type:'marker', index:20, y:99, dir:'up'}, {type:'marker', index:22, y:95, dir:'down'}
+      ]});
+
+    // Quality — one clean, well-timed setup
+    renderChart('chart-quality', { seed:72, n:26, start:90, vol:0.85, drift:0.4, ticker:'GBPUSD · 1H',
+      annotations:[ {type:'marker', index:13, y:96, dir:'up'} ]});
+  });
+
+  /* ---------- ambient drifting candles ---------- */
+  (function(){
+    const wrap=document.getElementById('ambient');
+    const rand=mulberry32(42);
+    for(let i=0;i<14;i++){
+      const s=document.createElement('span');
+      const up = rand() > 0.5;
+      s.className = 'c ' + (up?'up':'down');
+      s.style.background = up ? 'var(--green)' : 'var(--red)';
+      s.style.left = (rand()*100)+'vw';
+      s.style.height = (40+rand()*120)+'px';
+      s.style.animationDuration = (28+rand()*30)+'s';
+      s.style.animationDelay = (-rand()*40)+'s';
+      wrap.appendChild(s);
+    }
+  })();
+
+  /* ---------- progress rail + reveal + theme glow ---------- */
+  const sections = Array.from(document.querySelectorAll('main section[data-index]'));
+  const rail = document.getElementById('rail');
+  const railFill = document.getElementById('railFill');
+  const glows = { blue:document.getElementById('glow-blue'), green:document.getElementById('glow-green'), red:document.getElementById('glow-red') };
+
+  sections.forEach(sec => {
+    const btn = document.createElement('button');
+    btn.className = 'rail-dot'; btn.dataset.index = sec.dataset.index;
+    btn.innerHTML = '<span class="dot"></span><span class="label">' + sec.dataset.label + '</span>';
+    btn.addEventListener('click', () => sec.scrollIntoView({behavior:'smooth'}));
+    rail.appendChild(btn);
+  });
+  const dots = Array.from(document.querySelectorAll('.rail-dot'));
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        const idx = entry.target.dataset.index;
+        dots.forEach(d => d.classList.toggle('active', d.dataset.index === idx));
+        railFill.style.height = ((Number(idx)+1) / sections.length * 100) + '%';
+        const theme = entry.target.dataset.theme || 'blue';
+        Object.keys(glows).forEach(k => glows[k].classList.toggle('active', k===theme));
+      }
+    });
+  }, { threshold: 0.45 });
+  sections.forEach(sec => io.observe(sec));
+
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.draw-hero, .draw-hero-rect').forEach(el => {
+      el.style.strokeDasharray = '1'; el.style.strokeDashoffset = '1';
+      requestAnimationFrame(() => { el.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)'; el.style.strokeDashoffset = '0'; });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Course — Course Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D1117; --surface:#141A22; --surface-2:#1B232D; --border:#26313E;
+    --text:#EDF2F6; --text-muted:#8B96A6; --text-faint:#5C6675;
+    --accent:#4C9FE8; --accent-dim:rgba(76,159,232,0.14);
+    --green:#2FBE72; --green-dim:rgba(47,190,114,0.14);
+    --red:#F0555B; --red-dim:rgba(240,85,91,0.14);
+    --display:'Space Grotesk', sans-serif; --body:'Inter', sans-serif; --mono:'JetBrains Mono', monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{ background:var(--bg); color:var(--text); font-family:var(--body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+  body::before{
+    content:""; position:fixed; inset:0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:64px 64px; opacity:0.06; pointer-events:none;
+  }
+  main{ max-width:920px; margin:0 auto; padding:100px 24px 120px; position:relative; }
+  .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:18px; }
+  h1{ font-family:var(--display); font-weight:600; font-size:clamp(32px,5vw,52px); letter-spacing:-0.01em; margin-bottom:18px; }
+  h1 .hl{ color:var(--accent); }
+  .lede{ color:var(--text-muted); font-size:17px; max-width:60ch; margin-bottom:64px; }
+
+  .tier{ margin-bottom:56px; }
+  .tier-head{ display:flex; align-items:baseline; gap:14px; margin-bottom:20px; }
+  .tier-head h2{ font-family:var(--display); font-size:22px; font-weight:600; }
+  .tier-head .count{ font-family:var(--mono); font-size:12px; color:var(--text-faint); }
+  .tier-head .tier-tag{ font-family:var(--mono); font-size:10.5px; padding:4px 10px; border-radius:20px; text-transform:uppercase; letter-spacing:.06em; }
+  .tag-beginner{ background:var(--green-dim); color:var(--green); border:1px solid var(--green); }
+  .tag-intermediate{ background:var(--accent-dim); color:var(--accent); border:1px solid var(--accent); }
+  .tag-pro{ background:var(--red-dim); color:var(--red); border:1px solid var(--red); }
+
+  .lesson-list{ display:flex; flex-direction:column; gap:12px; }
+  .lesson-card{
+    display:flex; align-items:center; gap:18px;
+    background:var(--surface); border:1px solid var(--border); border-radius:12px;
+    padding:20px 22px; text-decoration:none; color:var(--text);
+    transition:border-color .2s ease, transform .2s ease;
+  }
+  .lesson-card:hover{ border-color:var(--accent); transform:translateX(4px); }
+  .lesson-card.disabled{ opacity:0.45; pointer-events:none; }
+  .lesson-num{ font-family:var(--mono); font-size:13px; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent); width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .lesson-card.disabled .lesson-num{ color:var(--text-faint); background:var(--surface-2); border-color:var(--border); }
+  .lesson-info h3{ font-family:var(--display); font-size:16px; margin-bottom:3px; }
+  .lesson-info p{ color:var(--text-muted); font-size:13px; }
+  .lesson-arrow{ margin-left:auto; color:var(--text-faint); font-family:var(--mono); font-size:14px; }
+  .soon{ margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.06em; }
+
+  footer{ text-align:center; color:var(--text-faint); font-family:var(--mono); font-size:11.5px; margin-top:40px; }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Trading Course — Full Curriculum</div>
+  <h1>Read the market like a <span class="hl">book.</span></h1>
+  <p class="lede">Every lesson from the course, rebuilt as a complete, readable presentation — full narration, real chart examples, and every diagram. Pick a tier and start.</p>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="tier-tag tag-beginner">Beginner</span>
+      <h2>Foundations</h2>
+      <span class="count">2 lessons</span>
+    </div>
+    <div class="lesson-list">
+      <a class="lesson-card" href="beginner-lesson-01.html">
+        <div class="lesson-num">01</div>
+        <div class="lesson-info"><h3>How To Read Candles Like A Book</h3><p>Anatomy of a candle, the 3 core types, momentum, and the two rules that change everything.</p></div>
+        <div class="lesson-arrow">→</div>
+      </a>
+      <a class="lesson-card" href="beginner-lesson-02.html">
+        <div class="lesson-num">02</div>
+        <div class="lesson-info"><h3>3 Reasons 90% of Traders Blow Their Account</h3><p>Moving stops, no system, overtrading — the mistakes that end most trading careers, and the fixes.</p></div>
+        <div class="lesson-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="tier-tag tag-intermediate">Intermediate</span>
+      <h2>Reading the Market</h2>
+      <span class="count">2 lessons</span>
+    </div>
+    <div class="lesson-list">
+      <div class="lesson-card disabled">
+        <div class="lesson-num">01</div>
+        <div class="lesson-info"><h3>Market Structure</h3><p>Higher highs, higher lows, break of structure, impulse vs correction.</p></div>
+        <div class="soon">Coming soon</div>
+      </div>
+      <div class="lesson-card disabled">
+        <div class="lesson-num">02</div>
+        <div class="lesson-info"><h3>Why I Trade 1:1 Risk-Reward</h3><p>The math, the psychology, and the data behind a low-variance approach.</p></div>
+        <div class="soon">Coming soon</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tier">
+    <div class="tier-head">
+      <span class="tier-tag tag-pro">Pro</span>
+      <h2>SMC Entry Models</h2>
+      <span class="count">3 lessons</span>
+    </div>
+    <div class="lesson-list">
+      <div class="lesson-card disabled">
+        <div class="lesson-num">01</div>
+        <div class="lesson-info"><h3>Mastering Liquidity</h3><p>Buy-side / sell-side liquidity, liquidity sweeps, and trading with the big players.</p></div>
+        <div class="soon">Coming soon</div>
+      </div>
+      <div class="lesson-card disabled">
+        <div class="lesson-num">02</div>
+        <div class="lesson-info"><h3>The Mitigation Block</h3><p>Why price returns to trap institutional traders, and how to enter with it.</p></div>
+        <div class="soon">Coming soon</div>
+      </div>
+      <div class="lesson-card disabled">
+        <div class="lesson-num">03</div>
+        <div class="lesson-info"><h3>The Breaker Block</h3><p>The mechanic behind every real reversal — and the SMC trader's nightmare.</p></div>
+        <div class="soon">Coming soon</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>10 lessons · 3 tiers · Built for anyone who'd rather read than watch</footer>
+</main>
+</body>
+</html>

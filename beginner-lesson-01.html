@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How To Read Candles Like A Book — Beginner Lesson 01</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0D1117;
+    --surface:#141A22;
+    --surface-2:#1B232D;
+    --border:#26313E;
+    --text:#EDF2F6;
+    --text-muted:#8B96A6;
+    --text-faint:#5C6675;
+    --accent:#4C9FE8;
+    --accent-dim:rgba(76,159,232,0.14);
+    --green:#2FBE72;
+    --green-dim:rgba(47,190,114,0.14);
+    --red:#F0555B;
+    --red-dim:rgba(240,85,91,0.14);
+    --amber:#E0A030;
+    --amber-dim:rgba(224,160,48,0.14);
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+    --mono: 'JetBrains Mono', monospace;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{ background:var(--bg); color:var(--text); font-family:var(--body); line-height:1.6; -webkit-font-smoothing:antialiased; }
+
+  body::before{
+    content:""; position:fixed; inset:0;
+    background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 64px 64px; opacity:0.06; pointer-events:none; z-index:0;
+  }
+
+  /* ---------- ambient theme glow layers ---------- */
+  .glow{ position:fixed; inset:0; z-index:0; pointer-events:none; opacity:0; transition:opacity 1.1s ease; }
+  #glow-blue{ background:radial-gradient(circle at 75% 20%, rgba(76,159,232,0.10), transparent 55%); }
+  #glow-green{ background:radial-gradient(circle at 75% 20%, rgba(47,190,114,0.10), transparent 55%); }
+  #glow-red{ background:radial-gradient(circle at 75% 20%, rgba(240,85,91,0.10), transparent 55%); }
+  .glow.active{ opacity:1; }
+
+  /* ---------- ambient drifting candles ---------- */
+  .ambient{ position:fixed; inset:0; overflow:hidden; z-index:0; pointer-events:none; }
+  .ambient span{ position:absolute; bottom:-200px; width:28px; border-radius:3px; opacity:0.05; animation:drift linear infinite; }
+  @keyframes drift{ 0%{ transform:translateY(0); } 100%{ transform:translateY(-140vh); } }
+
+  ::selection{ background:var(--accent-dim); color:var(--accent); }
+  a{ color:var(--accent); }
+
+  .eyebrow{ font-family:var(--mono); font-size:12px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .eyebrow .num{ color:var(--text-faint); }
+  .eyebrow .time{ color:var(--text-faint); margin-left:auto; }
+
+  h1,h2,h3{ font-family:var(--display); font-weight:600; letter-spacing:-0.01em; }
+
+  /* ---------- progress rail ---------- */
+  .rail{ position:fixed; left:28px; top:50%; transform:translateY(-50%); z-index:50; display:flex; flex-direction:column; gap:12px; align-items:flex-start; }
+  .rail-line{ position:absolute; left:5px; top:6px; bottom:6px; width:1px; background:var(--border); z-index:-1; }
+  .rail-fill{ position:absolute; left:5px; top:6px; width:1px; background:var(--accent); height:0%; transition:height .4s ease; z-index:-1; }
+  .rail-dot{ display:flex; align-items:center; gap:10px; background:none; border:none; cursor:pointer; padding:0; color:var(--text-faint); font-family:var(--mono); font-size:11px; opacity:0.55; transition:opacity .3s ease, color .3s ease; }
+  .rail-dot .dot{ width:11px; height:11px; border-radius:50%; border:1.5px solid var(--text-faint); background:var(--bg); flex-shrink:0; transition:all .3s ease; }
+  .rail-dot .label{ max-width:0; overflow:hidden; white-space:nowrap; transition:max-width .3s ease; }
+  .rail-dot:hover .label, .rail-dot.active .label{ max-width:160px; }
+  .rail-dot.active{ opacity:1; color:var(--text); }
+  .rail-dot.active .dot{ border-color:var(--accent); background:var(--accent); box-shadow:0 0 0 4px var(--accent-dim); }
+  @media (max-width:900px){ .rail{ display:none; } }
+
+  main{ position:relative; z-index:1; }
+  section{ min-height:100vh; display:flex; flex-direction:column; justify-content:center; padding:110px clamp(24px,8vw,140px); border-bottom:1px solid var(--border); position:relative; }
+  .section-inner{ max-width:1140px; margin:0 auto; width:100%; position:relative; }
+  .grid-2{ display:grid; grid-template-columns:1.05fr 0.95fr; gap:64px; align-items:center; }
+  @media (max-width:900px){ .grid-2{ grid-template-columns:1fr; gap:40px; } }
+
+  .body-copy{ font-size:17px; color:var(--text-muted); max-width:64ch; }
+  .body-copy + .body-copy{ margin-top:16px; }
+  .body-copy strong{ color:var(--text); font-weight:600; }
+
+  .block-title{ font-size:clamp(26px,3.2vw,38px); margin-bottom:22px; color:var(--text); }
+
+  /* callouts */
+  .callout{ border-left:3px solid var(--accent); background:var(--surface); padding:14px 18px; border-radius:0 10px 10px 0; font-size:14.5px; color:var(--text-muted); margin-top:18px; max-width:64ch; }
+  .callout .callout-label{ font-family:var(--mono); font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--accent); display:block; margin-bottom:6px; }
+  .callout.warn{ border-left-color:var(--amber); }
+  .callout.warn .callout-label{ color:var(--amber); }
+
+  .diagram-card, .chart-wrap{ background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:26px; position:relative; overflow:visible; }
+  .diagram-card svg{ width:100%; height:auto; display:block; }
+  .chart-scroll{ overflow-x:auto; overflow-y:hidden; -webkit-overflow-scrolling:touch; border-radius:8px; }
+  .chart-scroll svg{ display:block; height:auto; width:900px; }
+  @media (min-width:820px){ .chart-scroll svg{ width:100%; } }
+  .chart-scroll::-webkit-scrollbar{ height:6px; }
+  .chart-scroll::-webkit-scrollbar-thumb{ background:var(--border); border-radius:3px; }
+  .scroll-nudge{ display:none; font-family:var(--mono); font-size:10px; color:var(--text-faint); margin-top:8px; letter-spacing:.06em; text-transform:uppercase; }
+  @media (max-width:819px){ .scroll-nudge{ display:block; } }
+
+  /* reveal on scroll — gated behind confirmed JS support, so content is visible by default without it */
+  html.js-ready .reveal{ opacity:0; transform:translateY(24px); transition:opacity .7s ease, transform .7s ease; }
+  html.js-ready section.in-view .reveal{ opacity:1; transform:translateY(0); }
+  html.js-ready section.in-view .reveal.d1{ transition-delay:.08s; }
+  html.js-ready section.in-view .reveal.d2{ transition-delay:.18s; }
+
+  html.js-ready .draw{ stroke-dasharray:1; stroke-dashoffset:1; transition:stroke-dashoffset 1.1s cubic-bezier(.4,0,.2,1); }
+  html.js-ready section.in-view .draw{ stroke-dashoffset:0; }
+  html.js-ready .fade-in{ opacity:0; transition:opacity .6s ease; }
+  html.js-ready section.in-view .fade-in{ opacity:1; }
+  html.js-ready .fade-in.t1{ transition-delay:.5s; } html.js-ready .fade-in.t2{ transition-delay:.7s; } html.js-ready .fade-in.t3{ transition-delay:.9s; }
+  html.js-ready .fade-in.t4{ transition-delay:1.1s; } html.js-ready .fade-in.t5{ transition-delay:1.3s; } html.js-ready .fade-in.t6{ transition-delay:1.5s; }
+  html.js-ready .grow{ transform-origin:bottom; transform:scaleY(0); transition:transform .8s cubic-bezier(.4,0,.2,1); }
+  html.js-ready section.in-view .grow{ transform:scaleY(1); }
+
+  .chip-bg-blue{ fill:var(--accent-dim); stroke:var(--accent); stroke-width:1; }
+  .chip-text-blue{ fill:var(--accent); font-family:var(--mono); font-size:11px; }
+  .grid-line{ stroke:var(--border); stroke-width:1; stroke-dasharray:3 4; }
+  .axis-label{ font-family:var(--mono); font-size:9px; fill:var(--text-faint); }
+  .ticker-label{ font-family:var(--mono); font-size:11px; fill:var(--text-muted); letter-spacing:.05em; }
+  .anno-label{ font-family:var(--mono); font-size:10px; fill:var(--accent); }
+
+  /* pop-in floating badges — same progressive-enhancement gating */
+  .badge{ position:absolute; background:var(--surface-2); border:1px solid var(--border); border-radius:20px; padding:7px 14px; font-family:var(--mono); font-size:11.5px; color:var(--text); pointer-events:none; z-index:6; white-space:nowrap; box-shadow:0 8px 24px rgba(0,0,0,.35); }
+  html.js-ready .badge{ opacity:0; transform:scale(.6) rotate(-6deg); transition:opacity .55s cubic-bezier(.34,1.56,.64,1), transform .55s cubic-bezier(.34,1.56,.64,1); }
+  html.js-ready section.in-view .badge{ opacity:1; transform:scale(1) rotate(-2deg); }
+  .badge.dot-green::before{ content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--green); margin-right:7px; }
+  .badge.dot-red::before{ content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--red); margin-right:7px; }
+  .badge.dot-blue::before{ content:''; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent); margin-right:7px; }
+  @media (max-width:600px){
+    .badge{ font-size:10px; padding:6px 10px; white-space:normal; max-width:58%; line-height:1.35; box-shadow:0 6px 16px rgba(0,0,0,.35); }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:60px clamp(24px,8vw,140px); text-align:center; border-bottom:1px solid var(--border); position:relative; }
+  .hero-eyebrow{ font-family:var(--mono); font-size:13px; letter-spacing:0.14em; text-transform:uppercase; color:var(--text-faint); margin-bottom:28px; }
+  .hero h1{ font-size:clamp(38px,6.4vw,74px); line-height:1.05; max-width:16ch; margin:0 auto 28px; }
+  .hero h1 .hl{ color:var(--accent); }
+  .hero p{ color:var(--text-muted); font-size:18px; max-width:52ch; margin:0 auto 36px; }
+  .hero-candle{ width:120px; height:180px; margin:0 auto 40px; }
+  .objectives{ display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:620px; margin:0 auto 44px; }
+  .objectives span{ font-family:var(--mono); font-size:11.5px; color:var(--text-muted); background:var(--surface); border:1px solid var(--border); padding:7px 14px; border-radius:20px; }
+  .scroll-hint{ font-family:var(--mono); font-size:11px; color:var(--text-faint); display:flex; flex-direction:column; align-items:center; gap:10px; letter-spacing:0.1em; text-transform:uppercase; }
+  .scroll-hint .line{ width:1px; height:36px; background:linear-gradient(var(--text-faint), transparent); animation:pulse 2s ease-in-out infinite; }
+  @keyframes pulse{ 0%,100%{ opacity:.3; } 50%{ opacity:1; } }
+
+  .rule-card{ background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:22px 24px; display:flex; gap:16px; align-items:flex-start; }
+  .rule-card + .rule-card{ margin-top:14px; }
+  .rule-num{ font-family:var(--mono); font-size:13px; color:var(--accent); background:var(--accent-dim); border:1px solid var(--accent); width:30px; height:30px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .rule-card h4{ font-family:var(--display); font-size:16px; margin-bottom:6px; }
+  .rule-card p{ color:var(--text-muted); font-size:14.5px; }
+
+  .recap-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:8px; }
+  @media (max-width:700px){ .recap-grid{ grid-template-columns:1fr; } }
+  .recap-card{ background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .recap-card .tag{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.08em; }
+  .recap-card h4{ font-family:var(--display); font-size:16px; margin:8px 0 6px; }
+  .recap-card p{ color:var(--text-muted); font-size:13.5px; }
+
+  .next-lesson{ margin-top:36px; display:inline-flex; align-items:center; gap:12px; background:var(--surface); border:1px solid var(--border); padding:14px 20px; border-radius:12px; font-family:var(--mono); font-size:12.5px; color:var(--text-muted); }
+  .next-lesson strong{ color:var(--text); font-family:var(--display); font-size:14px; }
+
+  .twin-charts{ display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+  @media (max-width:700px){ .twin-charts{ grid-template-columns:1fr; } }
+  .twin-charts .chart-wrap h5{ font-family:var(--mono); font-size:11px; color:var(--text-faint); text-transform:uppercase; letter-spacing:.06em; margin-bottom:10px; }
+
+  footer{ padding:60px clamp(24px,8vw,140px) 80px; text-align:center; color:var(--text-faint); font-family:var(--mono); font-size:12px; }
+</style>
+</head>
+<body>
+<script>document.documentElement.classList.add('js-ready');</script>
+
+<div class="glow" id="glow-blue"></div>
+<div class="glow" id="glow-green"></div>
+<div class="glow" id="glow-red"></div>
+<div class="ambient" id="ambient"></div>
+
+<nav class="rail" id="rail">
+  <div class="rail-line"></div>
+  <div class="rail-fill" id="railFill"></div>
+</nav>
+
+<main>
+
+  <!-- HERO -->
+  <section class="hero" id="hero-section">
+    <div>
+      <div class="hero-eyebrow">Beginner Tier — Lesson 01</div>
+      <svg class="hero-candle" id="heroCandle" viewBox="0 0 120 180">
+        <line x1="60" y1="10" x2="60" y2="170" stroke="var(--text-faint)" stroke-width="2" pathLength="1" class="draw-hero"/>
+        <rect x="30" y="55" width="60" height="70" rx="4" fill="var(--green-dim)" stroke="var(--green)" stroke-width="2" pathLength="1" class="draw-hero-rect"/>
+      </svg>
+      <h1>Every candle tells a <span class="hl">story.</span></h1>
+      <p>A complete, readable version of this lesson — full narration, real chart examples, and every diagram, for anyone who'd rather read the market than watch it.</p>
+      <div class="objectives">
+        <span>✓ Read OHLC on sight</span>
+        <span>✓ Spot 3 candle types</span>
+        <span>✓ Judge momentum</span>
+        <span>✓ Use timeframes correctly</span>
+      </div>
+      <div class="scroll-hint"><div class="line"></div>Scroll</div>
+    </div>
+  </section>
+
+  <!-- 1. HOOK -->
+  <section data-index="0" data-label="Hook" data-theme="blue">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">01 / 12</span> Hook <span class="time">00:00–00:30</span></div>
+      <h2 class="block-title reveal d1">The battle you've been ignoring</h2>
+      <p class="body-copy reveal d2">Every candle on a chart tells a story. A story of a battle between buyers and sellers — who attacked, who defended, and who's in control right now. Most traders look at these candles and just see green or red rectangles. They have no idea what these candles are actually telling them.</p>
+      <p class="body-copy reveal d2">Today, you're going to learn how to read that story. By the end of this lesson, you'll understand price action better than 90% of traders out there — and you'll never look at a "boring" candle the same way again.</p>
+      <div class="callout reveal d2">
+        <span class="callout-label">Why it matters</span>
+        If you've ever stared at a chart with no idea what you're looking at, you're not alone. Most beginners are taught to spot "patterns" before they understand the basic alphabet those patterns are written in. This lesson is that alphabet — everything else in this course builds directly on it.
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. ANATOMY -->
+  <section data-index="1" data-label="Anatomy" data-theme="blue">
+    <div class="section-inner grid-2">
+      <div>
+        <div class="eyebrow reveal"><span class="num">02 / 12</span> Anatomy of a Candle</div>
+        <h2 class="block-title reveal d1">Four price levels, one candle</h2>
+        <p class="body-copy reveal d2">Every candle has four key price levels: <strong>open</strong>, <strong>high</strong>, <strong>low</strong>, and <strong>close</strong>. The candle opens, moves up to its high, down to its low, and closes somewhere along the way. Those four points are your key zones, and every single candle on every chart you'll ever look at is built from just these four numbers.</p>
+        <p class="body-copy reveal d2">The big rectangle — green or red — is the <strong>body</strong>. It's the distance between the open and the close, and it tells you how much conviction there was in that direction. The two lines sticking out top and bottom are <strong>wicks</strong> (sometimes called shadows). A wick shows the furthest price reached in that direction before pulling back. It touched that level, but couldn't hold it — which already tells you something about who lost the fight at that extreme.</p>
+        <div class="callout reveal d2">
+          <span class="callout-label">Common mistake</span>
+          New traders only check whether a candle is green or red and stop there. But wick length and body size carry just as much information as color. A tiny green body with a huge lower wick tells a completely different story than a tall green body with almost no wick — even though both are technically "green candles."
+        </div>
+      </div>
+      <div class="diagram-card reveal d2">
+        <svg viewBox="0 0 420 380">
+          <line x1="210" y1="30" x2="210" y2="330" stroke="var(--text-faint)" stroke-width="2" pathLength="1" class="draw fade-in t1"/>
+          <rect x="180" y="120" width="60" height="120" rx="4" fill="var(--green-dim)" stroke="var(--green)" stroke-width="2" pathLength="1" class="draw fade-in t2"/>
+          <g class="fade-in t3"><rect x="330" y="20" width="40" height="18" rx="9" class="chip-bg-blue"/><text x="350" y="33" text-anchor="middle" class="chip-text-blue">High</text></g>
+          <g class="fade-in t4"><rect x="330" y="105" width="46" height="18" rx="9" class="chip-bg-blue"/><text x="353" y="118" text-anchor="middle" class="chip-text-blue">Close</text></g>
+          <g class="fade-in t5"><rect x="330" y="225" width="46" height="18" rx="9" class="chip-bg-blue"/><text x="353" y="238" text-anchor="middle" class="chip-text-blue">Open</text></g>
+          <g class="fade-in t6"><rect x="330" y="315" width="38" height="18" rx="9" class="chip-bg-blue"/><text x="349" y="328" text-anchor="middle" class="chip-text-blue">Low</text></g>
+          <g class="fade-in t3"><text x="210" y="180" text-anchor="middle" class="chip-text-blue" style="fill:var(--green)">Body</text></g>
+        </svg>
+        <div class="badge dot-blue" style="top:14px; left:16px;">4 numbers. That's it.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. BULL VS BEAR -->
+  <section data-index="2" data-label="Bull vs Bear" data-theme="green">
+    <div class="section-inner grid-2">
+      <div class="diagram-card reveal d1" style="order:2;">
+        <svg viewBox="0 0 420 380">
+          <line x1="210" y1="30" x2="210" y2="330" stroke="var(--text-faint)" stroke-width="2" pathLength="1" class="draw fade-in t1"/>
+          <rect x="180" y="120" width="60" height="120" rx="4" fill="var(--red-dim)" stroke="var(--red)" stroke-width="2" pathLength="1" class="draw fade-in t2"/>
+          <g class="fade-in t3"><rect x="330" y="20" width="40" height="18" rx="9" class="chip-bg-blue"/><text x="350" y="33" text-anchor="middle" class="chip-text-blue">High</text></g>
+          <g class="fade-in t4"><rect x="330" y="105" width="42" height="18" rx="9" class="chip-bg-blue"/><text x="351" y="118" text-anchor="middle" class="chip-text-blue">Open</text></g>
+          <g class="fade-in t5"><rect x="330" y="225" width="46" height="18" rx="9" class="chip-bg-blue"/><text x="353" y="238" text-anchor="middle" class="chip-text-blue">Close</text></g>
+          <g class="fade-in t6"><rect x="330" y="315" width="38" height="18" rx="9" class="chip-bg-blue"/><text x="349" y="328" text-anchor="middle" class="chip-text-blue">Low</text></g>
+        </svg>
+        <div class="badge dot-red" style="bottom:14px; right:16px;">Open above Close = red</div>
+      </div>
+      <div style="order:1;">
+        <div class="eyebrow reveal"><span class="num">03 / 12</span> Bullish vs Bearish <span class="time">00:30–01:20</span></div>
+        <h2 class="block-title reveal d1">Same shape, flipped meaning</h2>
+        <p class="body-copy reveal d2">With a bearish candle, it's the same idea, just flipped: the open is higher, and the close is lower — price opened up here and closed down here, which is why it's red, or "bearish." With a bullish candle, it's the opposite: open low, close high.</p>
+        <p class="body-copy reveal d2">One more thing that trips people up early on — every candle represents a specific block of time, depending on your chart's timeframe. A candle on the 1-hour chart shows one full hour of trading. Switch to the 15-minute chart, and that same hour is now four separate candles, each telling its own smaller chapter of the same story.</p>
+        <div class="callout reveal d2">
+          <span class="callout-label">Why it matters</span>
+          This is exactly why the same price move can look completely different depending on which timeframe you're viewing. A sharp "reversal" on the 5-minute chart might just be a tiny, meaningless wiggle on the 4-hour chart. Always know which timeframe you're reading before you react to what you see.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. MARKET IS A BATTLE -->
+  <section data-index="3" data-label="Market Battle" data-theme="blue">
+    <div class="section-inner grid-2">
+      <div>
+        <div class="eyebrow reveal"><span class="num">04 / 12</span> The Market Is a Battle</div>
+        <h2 class="block-title reveal d1">Not pictures. A record of a fight.</h2>
+        <p class="body-copy reveal d2">Candles aren't just pictures — they're a visual record of a fight between buyers and sellers. Buyers push, price goes up. Sellers push, price goes down. Think of it as a tug-of-war: whichever side pulls harder during that candle's window of time determines where price ends up, and the rope marks — the wicks — show you exactly how far each side managed to drag it before losing ground.</p>
+        <p class="body-copy reveal d2">The market is a constant tug-of-war, and every single candle shows you who won that particular round. Zoom out far enough, and a whole trend is just a series of rounds one side kept winning.</p>
+      </div>
+      <div class="diagram-card reveal d2">
+        <svg viewBox="0 0 420 260">
+          <g class="grow"><rect x="20" y="20" width="380" height="60" rx="8" fill="var(--green-dim)" stroke="var(--green)" stroke-width="1.5"/></g>
+          <text x="210" y="45" text-anchor="middle" class="fade-in t2" style="fill:var(--text); font-family:var(--display); font-size:15px;">More buying = higher price</text>
+          <text x="210" y="65" text-anchor="middle" class="fade-in t3" style="fill:var(--text-muted); font-family:var(--mono); font-size:11px;">demand exceeds supply</text>
+          <g class="grow" style="transition-delay:.15s;"><rect x="20" y="100" width="380" height="60" rx="8" fill="var(--red-dim)" stroke="var(--red)" stroke-width="1.5"/></g>
+          <text x="210" y="125" text-anchor="middle" class="fade-in t3" style="fill:var(--text); font-family:var(--display); font-size:15px;">More selling = lower price</text>
+          <text x="210" y="145" text-anchor="middle" class="fade-in t4" style="fill:var(--text-muted); font-family:var(--mono); font-size:11px;">supply exceeds demand</text>
+          <text x="210" y="205" text-anchor="middle" class="fade-in t5" style="fill:var(--text-faint); font-family:var(--mono); font-size:11.5px;">Candles are a visual report of that battle</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. PRESSURE -->
+  <section data-index="4" data-label="Pressure" data-theme="red">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">05 / 12</span> Buying vs Selling Pressure <span class="time">01:20–02:35</span></div>
+      <h2 class="block-title reveal d1">Color isn't everything</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">Look at a candle with a small body and a long wick on one side. Even if it closed red (bearish), a long lower wick tells you buyers pushed back hard before the close — there was real buying pressure at that low, even though the candle "lost." Flip it around, and the same logic applies to sellers rejecting a high. <strong>Key takeaway: candle color isn't everything — you have to look at the wicks.</strong> A candle can close red and still be a weak bearish candle, or close green and still be a weak bullish one.</p>
+      <div class="chart-wrap reveal d2" style="position:relative;">
+        <div class="chart-scroll" id="chart-pressure"></div><div class="scroll-nudge">← scroll to see the full chart →</div>
+        <div class="badge dot-red" style="top:20%; right:8%;">Long wick = rejection</div>
+      </div>
+      <div class="callout warn reveal d2">
+        <span class="callout-label">Common mistake</span>
+        Traders who only glance at candle color miss this every time. On a real chart, a small red body sitting on top of a long lower wick — like the one highlighted above — is often a much stronger bullish signal than a plain green candle with no wick at all.
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. THREE TYPES INTRO -->
+  <section data-index="5" data-label="3 Types" data-theme="blue">
+    <div class="section-inner" style="text-align:center;">
+      <div class="eyebrow reveal" style="justify-content:center;"><span class="num">06 / 12</span> The 3 Types of Candles</div>
+      <h2 class="block-title reveal d1">Forget the thousands of patterns.</h2>
+      <p class="body-copy reveal d2" style="margin:0 auto 40px;">There are hundreds of named candlestick patterns out there, and trying to memorize all of them is exactly how most beginners burn out. Here's the shortcut: nearly every one of those patterns is really just a variation of <strong>three underlying types</strong>. Learn to spot these three, and you'll read a chart like an open book — patterns and all.</p>
+      <div class="diagram-card reveal d2">
+        <svg viewBox="0 0 680 260">
+          <line x1="150" y1="60" x2="150" y2="200" stroke="var(--text-faint)" stroke-width="2" pathLength="1" class="draw fade-in t1"/>
+          <rect x="120" y="75" width="60" height="110" rx="4" fill="var(--accent-dim)" stroke="var(--accent)" stroke-width="2" pathLength="1" class="draw fade-in t2"/>
+          <text x="150" y="225" text-anchor="middle" class="fade-in t3" style="fill:var(--text); font-family:var(--display); font-size:14px;">Strength</text>
+          <line x1="340" y1="60" x2="340" y2="200" stroke="var(--text-faint)" stroke-width="2" pathLength="1" class="draw fade-in t1"/>
+          <rect x="310" y="70" width="60" height="35" rx="4" fill="var(--accent-dim)" stroke="var(--accent)" stroke-width="2" pathLength="1" class="draw fade-in t2"/>
+          <text x="340" y="225" text-anchor="middle" class="fade-in t3" style="fill:var(--text); font-family:var(--display); font-size:14px;">Reversal</text>
+          <line x1="530" y1="60" x2="530" y2="200" stroke="var(--text-faint)" stroke-width="2" pathLength="1" class="draw fade-in t1"/>
+          <rect x="500" y="115" width="60" height="30" rx="4" fill="var(--accent-dim)" stroke="var(--accent)" stroke-width="2" pathLength="1" class="draw fade-in t2"/>
+          <text x="530" y="225" text-anchor="middle" class="fade-in t3" style="fill:var(--text); font-family:var(--display); font-size:14px;">Indecision</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. STRENGTH -->
+  <section data-index="6" data-label="Strength" data-theme="green">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">07 / 12</span> Type 1 — Strength Candle</div>
+      <h2 class="block-title reveal d1">Big body, small wicks</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">Price opens and moves confidently to close near its extreme. Tiny wicks just show minor resistance that got overpowered along the way. A rare version has <strong>no wick at all</strong> — zero resistance on the opposing side, and a strong signal the next candle continues the same direction. Depending on context, a strength candle can also show up as an <strong>engulfing candle</strong> — one candle completely swallowing the price range of several previous candles. That's a full takeover in control, all happening in a single bar.</p>
+      <div class="chart-wrap reveal d2" style="position:relative;">
+        <div class="chart-scroll" id="chart-engulf"></div><div class="scroll-nudge">← scroll to see the full chart →</div>
+        <div class="badge dot-red" style="top:12%; right:10%;">1 candle erases 4 candles of gains</div>
+      </div>
+      <div class="callout reveal d2">
+        <span class="callout-label">Why it matters</span>
+        An engulfing candle isn't just "a big candle" — it specifically needs to open past the prior candle's close and close past the prior candle's open, fully swallowing its body. That's what marks a genuine shift in control, not just a normal strong move in the trend's own direction.
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. REVERSAL -->
+  <section data-index="7" data-label="Reversal" data-theme="red">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">08 / 12</span> Type 2 — Reversal Candle <span class="time">Control Shift</span></div>
+      <h2 class="block-title reveal d1">Small body, one long wick</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">Price pushes hard in one direction — just like a strength candle starting out — but the opposite side steps in, takes control, and drags price back. It closes way off its extreme. The initial move was real, but the other side ultimately won that round. <strong>Context matters a lot here.</strong> At a key support or resistance level, this is a strong reversal signal. If you've heard of a <strong>Pin Bar</strong> — that's this exact pattern wearing a different name.</p>
+      <div class="chart-wrap reveal d2" style="position:relative;">
+        <div class="chart-scroll" id="chart-pinbar"></div><div class="scroll-nudge">← scroll to see the full chart →</div>
+        <div class="badge dot-blue" style="top:10%; left:8%;">Pin Bar at the highs</div>
+      </div>
+      <div class="callout warn reveal d2">
+        <span class="callout-label">Common mistake</span>
+        A reversal candle floating in the middle of a range, with no key level nearby, means far less than the exact same candle shape sitting right at a swing high or a well-tested support zone. Shape alone is never the full signal — location is what gives it weight.
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. INDECISION -->
+  <section data-index="8" data-label="Indecision" data-theme="blue">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">09 / 12</span> Type 3 — Indecision Candle <span class="time">Doji</span></div>
+      <h2 class="block-title reveal d1">Nobody's in control yet</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">Structurally similar to a reversal candle, but the open and close sit almost at the same level. Buyers pushed up, sellers pushed down, buyers fought back — and it closed right around where it opened. Long wicks on both sides, small body. <strong>Rule of thumb:</strong> don't trade off this candle directly — wait for the next candle to confirm direction. If you've heard of a <strong>Doji</strong> — this is that pattern.</p>
+      <div class="chart-wrap reveal d2" style="position:relative;">
+        <div class="chart-scroll" id="chart-doji"></div><div class="scroll-nudge">← scroll to see the full chart →</div>
+        <div class="badge dot-blue" style="bottom:14%; right:8%;">Open ≈ Close</div>
+      </div>
+      <div class="callout reveal d2">
+        <span class="callout-label">Why it matters</span>
+        A doji is a question mark, not an answer. It's telling you the tug-of-war ended in a draw — which is genuinely useful information — but it isn't telling you who wins the next round. That's what the following candle is for.
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. MOMENTUM -->
+  <section data-index="9" data-label="Momentum" data-theme="green">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">10 / 12</span> Momentum <span class="time">Reading candle size</span></div>
+      <h2 class="block-title reveal d1">Big candles, big moves</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:32px;">Big candles mean strong momentum — lots of participants, lots of activity. Small candles mean weak momentum. Compare candles side by side: if each one is getting smaller than the one before it, momentum is fading and the move may be running out of steam. If each one is getting bigger, momentum is building — a good sign you're catching a genuinely strong move rather than a random wiggle.</p>
+      <div class="diagram-card reveal d2">
+        <svg viewBox="0 0 680 220">
+          <g fill="var(--accent-dim)" stroke="var(--accent)" stroke-width="1.5" pathLength="1">
+            <rect x="90" y="60" width="40" height="120" rx="3" class="draw fade-in t1"/>
+            <rect x="150" y="90" width="40" height="90" rx="3" class="draw fade-in t2"/>
+            <rect x="210" y="120" width="40" height="60" rx="3" class="draw fade-in t3"/>
+          </g>
+          <text x="170" y="205" text-anchor="middle" class="fade-in t3" style="fill:var(--text-muted); font-family:var(--mono); font-size:11px;">momentum fading</text>
+          <g fill="var(--accent-dim)" stroke="var(--accent)" stroke-width="1.5" pathLength="1">
+            <rect x="380" y="120" width="40" height="60" rx="3" class="draw fade-in t4"/>
+            <rect x="440" y="90" width="40" height="90" rx="3" class="draw fade-in t5"/>
+            <rect x="500" y="60" width="40" height="120" rx="3" class="draw fade-in t6"/>
+          </g>
+          <text x="460" y="205" text-anchor="middle" class="fade-in t6" style="fill:var(--text-muted); font-family:var(--mono); font-size:11px;">momentum building</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 11. KEY RULES -->
+  <section data-index="10" data-label="Key Rules" data-theme="blue">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">11 / 12</span> Two Key Rules <span class="time">Timeframes &amp; Levels</span></div>
+      <h2 class="block-title reveal d1">Two habits that change everything</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:28px;">If you only look at a 5-minute chart, you might see a bullish setup and go long — but zoom out, and the overall trend might actually be bearish. The higher timeframe always takes priority. Compare the same instrument on two timeframes below: the 4-hour view gives you the real story, the 15-minute view is just where you time your entry once you already know the story.</p>
+      <div class="twin-charts reveal d2">
+        <div class="chart-wrap"><h5>4H — the real trend (bias)</h5><div class="chart-scroll" id="chart-htf"></div></div>
+        <div class="chart-wrap"><h5>15m — noisy, entry only</h5><div class="chart-scroll" id="chart-ltf"></div></div>
+      </div>
+      <div class="grid-2" style="margin-top:36px; align-items:start;">
+        <div class="rule-card">
+          <div class="rule-num">1</div>
+          <div><h4>Check the higher timeframe first</h4><p>It gives you the bigger picture before you drop down to find an entry on a lower timeframe. Skip this, and you'll keep fighting the real trend without realizing it.</p></div>
+        </div>
+        <div class="rule-card">
+          <div class="rule-num">2</div>
+          <div><h4>Watch candles at key levels</h4><p>A strong candle at a key level may signal a break. A reversal or indecision candle there often signals a turn. Watching key zones saves you from analyzing every candle on the chart.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. RECAP -->
+  <section data-index="11" data-label="Recap" data-theme="green">
+    <div class="section-inner">
+      <div class="eyebrow reveal"><span class="num">12 / 12</span> Recap</div>
+      <h2 class="block-title reveal d1">You read the market like a book now.</h2>
+      <p class="body-copy reveal d2" style="margin-bottom:24px;">Candles tell the story of a battle between buyers and sellers — who attacked, who defended, who won. Two rules to carry forward: always check the higher timeframe first, and always pay attention to candles forming at key levels.</p>
+      <div class="chart-wrap reveal d2" style="position:relative; margin-bottom:24px;">
+        <div class="chart-scroll" id="chart-recap"></div><div class="scroll-nudge">← scroll to see the full chart →</div>
+      </div>
+      <div class="recap-grid reveal d2">
+        <div class="recap-card"><div class="tag">Type 1</div><h4 style="color:var(--accent)">Strength</h4><p>Big body, small wicks. One side dominates — expect continuation.</p></div>
+        <div class="recap-card"><div class="tag">Type 2</div><h4 style="color:var(--accent)">Reversal</h4><p>Small body, long wick one side. Control just shifted.</p></div>
+        <div class="recap-card"><div class="tag">Type 3</div><h4 style="color:var(--accent)">Indecision</h4><p>Small body, wicks both sides. Nobody's in control — wait.</p></div>
+      </div>
+      <div class="reveal d2">
+        <a href="beginner-lesson-02.html" class="next-lesson" style="text-decoration:none; cursor:pointer;">Next up → <strong>Beginner Lesson 02: 3 Reasons 90% of Traders Blow Their Account</strong></a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer><a href="index.html" style="color:var(--text-faint); text-decoration:none;">← Back to course overview</a> &nbsp;·&nbsp; Beginner Lesson 1 of 2 — How To Read Candles Like A Book</footer>
+
+<script>
+  /* ---------- seeded random + chart generator ---------- */
+  function mulberry32(a){ return function(){ a|=0; a=a+0x6D2B79F5|0; let t=Math.imul(a^a>>>15,1|a); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+
+  function genSeries(seed,n,start,vol){
+    const rand=mulberry32(seed); let price=start; const out=[];
+    for(let i=0;i<n;i++){
+      const open=price; const change=(rand()-0.5)*vol; let close=open+change;
+      const high=Math.max(open,close)+rand()*vol*0.35;
+      const low=Math.min(open,close)-rand()*vol*0.35;
+      out.push({open,high,low,close}); price=close;
+    }
+    return out;
+  }
+
+  function renderChart(elId, opts){
+    const el=document.getElementById(elId); if(!el) return;
+    let candles=genSeries(opts.seed,opts.n,opts.start,opts.vol);
+    if(opts.overrides){ Object.keys(opts.overrides).forEach(i=>{ candles[i]=Object.assign({},candles[i],opts.overrides[i]); }); }
+    const W=900,H=340,padL=16,padR=64,padT=44,padB=20;
+    const plotW=W-padL-padR, plotH=H-padT-padB;
+    const highs=candles.map(c=>c.high), lows=candles.map(c=>c.low);
+    const max=Math.max(...highs), min=Math.min(...lows), range=(max-min)||1;
+    const y=v=>padT+(1-(v-min)/range)*plotH;
+    const n=candles.length, slot=plotW/n, cw=Math.max(3,slot*0.62);
+
+    let svg=`<svg viewBox="0 0 ${W} ${H}">`;
+    for(let i=0;i<=4;i++){
+      const gy=padT+plotH*i/4;
+      svg+=`<line x1="${padL}" y1="${gy}" x2="${W-padR+44}" y2="${gy}" class="grid-line"/>`;
+      svg+=`<text x="${W-padR+8}" y="${gy+4}" class="axis-label">${(max-range*i/4).toFixed(2)}</text>`;
+    }
+    svg+=`<text x="${padL}" y="22" class="ticker-label">${opts.ticker||''}</text>`;
+
+    candles.forEach((c,i)=>{
+      const cx=padL+slot*i+slot/2, up=c.close>=c.open;
+      const color=up?'var(--green)':'var(--red)', bg=up?'var(--green-dim)':'var(--red-dim)';
+      const bodyTop=y(Math.max(c.open,c.close)), bodyBot=y(Math.min(c.open,c.close));
+      const bodyH=Math.max(1.5,bodyBot-bodyTop);
+      const delay=(i*0.012).toFixed(3);
+      svg+=`<line x1="${cx}" y1="${y(c.high)}" x2="${cx}" y2="${y(c.low)}" stroke="${color}" stroke-width="1.4" pathLength="1" class="draw" style="transition-delay:${delay}s"/>`;
+      svg+=`<rect x="${(cx-cw/2).toFixed(1)}" y="${bodyTop.toFixed(1)}" width="${cw.toFixed(1)}" height="${bodyH.toFixed(1)}" fill="${bg}" stroke="${color}" stroke-width="1.2" rx="1" class="fade-in" style="transition-delay:${(i*0.012+0.15).toFixed(3)}s"/>`;
+    });
+
+    (opts.annotations||[]).forEach((a,ai)=>{
+      if(a.type==='zone'){
+        const x0=padL+slot*a.from, x1=padL+slot*(a.to+1);
+        const yTop=y(a.top), yBot=y(a.bottom);
+        svg+=`<rect x="${x0.toFixed(1)}" y="${yTop.toFixed(1)}" width="${(x1-x0).toFixed(1)}" height="${(yBot-yTop).toFixed(1)}" fill="var(--accent-dim)" stroke="var(--accent)" stroke-width="1" class="fade-in" style="transition-delay:${1.2+ai*0.2}s"/>`;
+        svg+=`<text x="${(x0+8).toFixed(1)}" y="${(yTop-8).toFixed(1)}" class="anno-label fade-in" style="transition-delay:${1.35+ai*0.2}s">${a.label}</text>`;
+      }
+    });
+
+    svg+='</svg>';
+    el.innerHTML=svg;
+  }
+
+  window.addEventListener('load', () => {
+    renderChart('chart-pressure', { seed:5, n:32, start:100, vol:1.15, ticker:'EURUSD · 1H',
+      overrides:{ 22:{ open:100.35, close:100.05, high:100.45, low:97.1 } },
+      annotations:[{type:'zone', from:22, to:22, top:100.5, bottom:97.0, label:'buyers pushed back'}] });
+
+    renderChart('chart-engulf', { seed:7, n:30, start:90, vol:1.0, ticker:'XAUUSD · 4H',
+      overrides:{
+        19:{ open:94.0, close:94.6, high:94.8, low:93.8 },
+        20:{ open:94.6, close:95.3, high:95.5, low:94.4 },
+        21:{ open:95.3, close:96.0, high:96.2, low:95.1 },
+        22:{ open:96.0, close:96.6, high:96.8, low:95.9 },
+        23:{ open:97.0, close:93.4, high:97.2, low:93.2 }
+      },
+      annotations:[{type:'zone', from:19, to:23, top:97.4, bottom:93.0, label:'engulfing candle'}] });
+
+    renderChart('chart-pinbar', { seed:8, n:30, start:110, vol:1.25, ticker:'GBPUSD · 1H',
+      overrides:{ 18:{ open:115.0, close:114.7, high:118.5, low:114.5 } },
+      annotations:[{type:'zone', from:18, to:18, top:118.7, bottom:114.3, label:'pin bar rejection'}] });
+
+    renderChart('chart-doji', { seed:9, n:26, start:80, vol:0.95,ticker:'USDJPY · 1H',
+      overrides:{ 15:{ open:83.0, close:83.05, high:84.6, low:81.4 } },
+      annotations:[{type:'zone', from:15, to:15, top:84.8, bottom:81.2, label:'doji — open ≈ close'}] });
+
+    renderChart('chart-htf', { seed:11, n:16, start:100, vol:2.2, ticker:'EURUSD · 4H' });
+    renderChart('chart-ltf', { seed:112, n:46, start:100, vol:0.9, ticker:'EURUSD · 15m' });
+
+    renderChart('chart-recap', { seed:21, n:34, start:100, vol:1.05, ticker:'EURUSD · 1H',
+      overrides:{
+        8:{ open:98.8, close:99.6, high:99.7, low:98.7 },
+        9:{ open:99.6, close:100.4, high:100.5, low:99.5 },
+        18:{ open:103.0, close:102.7, high:105.4, low:102.5 },
+        27:{ open:97.0, close:97.05, high:98.4, low:95.6 }
+      },
+      annotations:[
+        {type:'zone', from:8, to:9, top:100.6, bottom:98.6, label:'strength'},
+        {type:'zone', from:18, to:18, top:105.6, bottom:102.3, label:'reversal'},
+        {type:'zone', from:27, to:27, top:98.6, bottom:95.4, label:'indecision'}
+      ]});
+  });
+
+  /* ---------- ambient drifting candles ---------- */
+  (function(){
+    const wrap=document.getElementById('ambient');
+    const rand=mulberry32(42);
+    for(let i=0;i<14;i++){
+      const s=document.createElement('span');
+      const up = rand() > 0.5;
+      s.className = 'c ' + (up?'up':'down');
+      s.style.background = up ? 'var(--green)' : 'var(--red)';
+      s.style.left = (rand()*100)+'vw';
+      s.style.height = (40+rand()*120)+'px';
+      s.style.animationDuration = (28+rand()*30)+'s';
+      s.style.animationDelay = (-rand()*40)+'s';
+      wrap.appendChild(s);
+    }
+  })();
+
+  /* ---------- progress rail + reveal + theme glow ---------- */
+  const sections = Array.from(document.querySelectorAll('main section[data-index]'));
+  const rail = document.getElementById('rail');
+  const railFill = document.getElementById('railFill');
+  const glows = { blue:document.getElementById('glow-blue'), green:document.getElementById('glow-green'), red:document.getElementById('glow-red') };
+
+  sections.forEach(sec => {
+    const btn = document.createElement('button');
+    btn.className = 'rail-dot'; btn.dataset.index = sec.dataset.index;
+    btn.innerHTML = '<span class="dot"></span><span class="label">' + sec.dataset.label + '</span>';
+    btn.addEventListener('click', () => sec.scrollIntoView({behavior:'smooth'}));
+    rail.appendChild(btn);
+  });
+  const dots = Array.from(document.querySelectorAll('.rail-dot'));
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        const idx = entry.target.dataset.index;
+        dots.forEach(d => d.classList.toggle('active', d.dataset.index === idx));
+        railFill.style.height = ((Number(idx)+1) / sections.length * 100) + '%';
+        const theme = entry.target.dataset.theme || 'blue';
+        Object.keys(glows).forEach(k => glows[k].classList.toggle('active', k===theme));
+      }
+    });
+  }, { threshold: 0.45 });
+  sections.forEach(sec => io.observe(sec));
+
+  window.addEventListener('load', () => {
+    document.querySelectorAll('.draw-hero, .draw-hero-rect').forEach(el => {
+      el.style.strokeDasharray = '1'; el.style.strokeDashoffset = '1';
+      requestAnimationFrame(() => { el.style.transition = 'stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1)'; el.style.strokeDashoffset = '0'; });
+    });
+  });
+</script>
+
+</body>
+</html>
